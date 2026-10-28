@@ -1,0 +1,16 @@
+.gradle/
+build/
+local.properties
+.idea/
+*.iml
+.DS_Store
+captures/
+.kotlin/
+
+# The signing key and its passwords never go on GitHub.
+*.keystore
+*.jks
+app/keystore.properties
+
+# Off-device screen previews (rendered on demand)
+screenshots/

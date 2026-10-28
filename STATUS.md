@@ -1,0 +1,26 @@
+# Lumi status
+
+## Live (v0.1.0)
+- Start screen in three groups: Today, Every day, Around the house.
+- Landscape scrolls sideways; portrait scrolls down. Same tiles, they reflow.
+- Clock tile with date and today's weather (free Open-Meteo, city-level location only).
+- Keep listening tile: the book she's in the middle of, with cover and progress, from Audiobookshelf on the NAS.
+- Photos tile: slowly flips through her latest pictures.
+- Storage tile: tablet and SD card space. Turns amber at 80% full, red at 90%.
+- Call for help tile: opens a WhatsApp chat with the number set in settings.
+- Folders that slide open: School, Talk, Mail, Crochet, Watch, Shopping, Home, Money, Tools.
+  Folder tiles flip now and then to show the apps inside.
+- My apps: anything installed later that no tile covers lands here on its own.
+- All apps: every app A to Z in big rows, with an A to Z strip to jump around.
+- Tiles press in when tapped (Windows Phone tilt) and swing in when the start screen opens.
+- Animations stop when the tablet's "remove animations" setting is on.
+- Black or white background (settings).
+- Hidden settings: press and hold the clock tile.
+
+## Not tested yet on her tablet
+- Keep listening tile against her real Audiobookshelf server (needs the server set up first).
+- AiData and AiFoto tiles find those apps by name, since their package names weren't known yet.
+
+## Next
+- Unread counts on Talk and Mail (needs her to allow notification access once).
+- Optional edit mode so Jordan can move tiles on the tablet instead of in `Catalog.kt`.
