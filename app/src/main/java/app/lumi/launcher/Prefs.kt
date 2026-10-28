@@ -36,6 +36,11 @@ class Prefs(context: Context) {
         get() = sp.getString("abs_token", "").orEmpty()
         set(v) = sp.edit().putString("abs_token", v.trim()).apply()
 
+    /** Her tile arrangement: tile ids in order, comma-separated. Empty means the default. */
+    var tileOrder: String
+        get() = sp.getString("tile_order", "").orEmpty()
+        set(v) = sp.edit().putString("tile_order", v).apply()
+
     /** Asked for location and photo access once already. */
     var askedPermissions: Boolean
         get() = sp.getBoolean("asked_perms", false)

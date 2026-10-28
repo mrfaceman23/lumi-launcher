@@ -41,8 +41,47 @@ class LauncherViewModel(app: Application) : AndroidViewModel(app) {
     var allAppsOpen by mutableStateOf(false)
     var settingsOpen by mutableStateOf(false)
 
+    /** The start screen tiles, in her order. */
+    var tiles by mutableStateOf(applyOrder(Catalog.startTiles, prefs.tileOrder)); private set
+
+    /** Arrange mode: tap a tile, then tap where it goes. */
+    var arranging by mutableStateOf(false); private set
+
+    /** The tile she tapped first in arrange mode, waiting for where it goes. */
+    var picked by mutableStateOf<String?>(null); private set
+
+    fun startArranging() {
+        closeAll()
+        picked = null
+        arranging = true
+    }
+
+    fun arrangeTap(id: String) {
+        val first = picked
+        when {
+            first == null -> picked = id
+            first == id -> picked = null
+            else -> {
+                tiles = swapTiles(tiles, first, id)
+                prefs.tileOrder = tiles.joinToString(",") { it.id }
+                picked = null
+            }
+        }
+    }
+
+    fun doneArranging() {
+        arranging = false
+        picked = null
+    }
+
+    fun resetLayout() {
+        prefs.tileOrder = ""
+        tiles = Catalog.startTiles
+    }
+
     /** Closes whatever is open. Returns false if nothing was. */
     fun closeTop(): Boolean = when {
+        arranging -> { doneArranging(); true }
         settingsOpen -> { settingsOpen = false; true }
         openFolder != null -> { openFolder = null; true }
         allAppsOpen -> { allAppsOpen = false; true }

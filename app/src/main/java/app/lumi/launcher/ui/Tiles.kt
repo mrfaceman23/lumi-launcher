@@ -56,6 +56,9 @@ import java.util.Date
 import java.util.Locale
 import kotlin.math.roundToInt
 
+/** What pressing and holding a start-screen tile does when the tile has nothing of its own: arrange mode. */
+val LocalTileLongPress = compositionLocalOf<(() -> Unit)?> { null }
+
 /** Side length of a medium (square) tile. Every size on a tile scales from this. */
 val LocalTile = compositionLocalOf { 200.dp }
 
@@ -81,7 +84,7 @@ fun TileBox(
 ) {
     Box(
         modifier
-            .pressable(onClick, onLongClick)
+            .pressable(onClick, onLongClick ?: LocalTileLongPress.current)
             .background(color)
             .then(if (padded) Modifier.padding(LocalTile.current * 0.07f) else Modifier),
         content = content,
@@ -293,8 +296,8 @@ fun StorageTile(color: Color, spaces: List<Space>, modifier: Modifier, onClick: 
 // ---------------------------------------------------------------- Help
 
 @Composable
-fun HelpTile(color: Color, name: String, setUp: Boolean, modifier: Modifier, onClick: () -> Unit) {
-    TileBox(color, modifier, onClick) {
+fun HelpTile(color: Color, name: String, setUp: Boolean, modifier: Modifier, onTap: () -> Unit, onHold: () -> Unit) {
+    TileBox(color, modifier, onTap, onHold) {
         Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween) {
             GlyphIcon(Glyph.HELP, Modifier.size(glyphSize()))
             Column {
@@ -302,8 +305,8 @@ fun HelpTile(color: Color, name: String, setUp: Boolean, modifier: Modifier, onC
                 TileSub(
                     when {
                         !setUp -> "Not set up yet"
-                        name.isNotBlank() -> "Reaches $name"
-                        else -> "Reaches family"
+                        name.isNotBlank() -> "Hold to reach $name"
+                        else -> "Hold to reach family"
                     },
                     maxLines = 1,
                 )

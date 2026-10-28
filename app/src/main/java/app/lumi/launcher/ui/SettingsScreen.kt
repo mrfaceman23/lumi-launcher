@@ -77,6 +77,13 @@ fun SettingsScreen(vm: LauncherViewModel, onMakeDefault: () -> Unit, versionName
                 Body(if (vm.light) "White background" else "Black background (Lumia style)")
             }
 
+            Heading("Tiles")
+            Body("She can move tiles herself: press and hold any tile, tap one, then tap where it goes.", dim = true)
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Button("Arrange tiles", Color(0xFF0A5BB5)) { save(); vm.settingsOpen = false; vm.startArranging() }
+                Button("Reset tile layout", Color(0xFF3D4651)) { vm.resetLayout(); vm.toast("Tiles are back in the original order") }
+            }
+
             Heading("Call for help tile")
             Field("Name on the tile (for example, Jordan)", helpName) { helpName = it }
             Field("WhatsApp number, with country code (1 for the US)", helpNumber, KeyboardType.Phone) { helpNumber = it }

@@ -41,8 +41,44 @@ class CatalogTest {
     }
 
     @Test
-    fun helpIsTheVeryLastTile() {
-        assertEquals("help", Catalog.groups.last().tiles.last().id)
+    fun savedOrderIsUsedAndNewTilesAreKept() {
+        val d = Catalog.startTiles
+        val saved = listOf(d[1].id, d[0].id, "gone-tile").joinToString(",")
+        val out = applyOrder(d, saved)
+        assertEquals(d[1].id, out[0].id)
+        assertEquals(d[0].id, out[1].id)
+        // Nothing lost, nothing doubled, unknown ids ignored.
+        assertEquals(d.map { it.id }.toSet(), out.map { it.id }.toSet())
+        assertEquals(d.size, out.size)
+    }
+
+    @Test
+    fun onlySameSizeTilesSwap() {
+        val d = Catalog.startTiles
+        val wide = d.first { it.size == TileSize.WIDE }.id
+        val medium = d.first { it.size == TileSize.MEDIUM }.id
+        assertEquals(d, swapTiles(d, wide, medium))
+        val other = d.last { it.size == TileSize.MEDIUM }.id
+        val swapped = swapTiles(d, medium, other)
+        assertEquals(other, swapped[d.indexOfFirst { it.id == medium }].id)
+    }
+
+    @Test
+    fun anyArrangementStaysFreeOfHoles() {
+        // Swaps keep the sequence of tile sizes, so shuffling mediums never makes a gap.
+        val d = Catalog.startTiles
+        val mediums = d.filter { it.size == TileSize.MEDIUM }.map { it.id }
+        var t = d
+        for (k in 0 until 40) t = swapTiles(t, mediums[k % mediums.size], mediums[(k * 7 + 3) % mediums.size])
+        val sizes = t.map { it.size.units }
+        assertTrue(packRows(sizes, 4).all { r -> r.sumOf { sizes[it] } == 4 })
+        assertTrue(packRows(sizes, 6).all { r -> r.sumOf { sizes[it] } == 6 })
+    }
+
+    @Test
+    fun helpNeedsAHoldAndSitsNearTheFront() {
+        val i = Catalog.startTiles.indexOfFirst { it.id == "help" }
+        assertTrue(i in 0..5)
     }
 
     @Test

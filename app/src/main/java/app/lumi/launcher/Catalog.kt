@@ -115,6 +115,8 @@ object Catalog {
                 TileDef("listen", TileKind.LISTEN, TileSize.WIDE, "Keep listening", PURPLE, Glyph.LISTEN, listOf(AUDIOBOOKSHELF), "Audiobookshelf"),
                 TileDef("photos", TileKind.PHOTOS, TileSize.MEDIUM, "Photos", MAGENTA, Glyph.PHOTOS, photoApps, PHOTO_APP_HINT),
                 TileDef("storage", TileKind.STORAGE, TileSize.MEDIUM, "Storage", SLATE, Glyph.STORAGE),
+                // Easy to find, but a tap does nothing: it only calls on press and hold.
+                TileDef("help", TileKind.HELP, TileSize.MEDIUM, "Call for help", RED, Glyph.HELP),
                 school, talk, mail, crochet, watch,
                 TileDef("spotify", TileKind.APP, TileSize.MEDIUM, "Spotify", packages = listOf("com.spotify.music")),
                 TileDef("kindle", TileKind.APP, TileSize.MEDIUM, "Kindle", packages = listOf("com.amazon.kindle")),
@@ -125,11 +127,12 @@ object Catalog {
                 shopping, home, money, tools,
                 TileDef("myapps", TileKind.MY_APPS, TileSize.MEDIUM, "My apps", SLATE, Glyph.MY_APPS),
                 TileDef("allapps", TileKind.ALL_APPS, TileSize.MEDIUM, "All apps", BLUE, Glyph.ALL_APPS),
-                // Last on purpose, so it's hard to hit by accident.
-                TileDef("help", TileKind.HELP, TileSize.MEDIUM, "Call for help", RED, Glyph.HELP),
             ),
         ),
     )
+
+    /** The start screen's tiles in their default order. */
+    val startTiles: List<TileDef> get() = groups.flatMap { it.tiles }
 
     /** Every package some tile or folder already shows. Anything else goes in "My apps". */
     val claimedPackages: Set<String> by lazy {
@@ -162,4 +165,28 @@ fun packRows(sizes: List<Int>, width: Int): List<List<Int>> {
         }
     }
     return rows
+}
+
+/**
+ * Puts tiles in the order she saved (comma-separated ids). Ids that no longer exist are skipped,
+ * and tiles added in a later version of Lumi go at the end, so an update never loses a tile.
+ */
+fun applyOrder(defaults: List<TileDef>, saved: String): List<TileDef> {
+    if (saved.isBlank()) return defaults
+    val byId = defaults.associateBy { it.id }
+    val seen = mutableSetOf<String>()
+    val out = saved.split(',').mapNotNull { byId[it.trim()] }.filter { seen.add(it.id) }.toMutableList()
+    defaults.filterTo(out) { it.id !in seen }
+    return out
+}
+
+/**
+ * Swaps two tiles. Only tiles of the same size swap, which keeps the screen free of holes;
+ * anything else returns the list unchanged.
+ */
+fun swapTiles(tiles: List<TileDef>, a: String, b: String): List<TileDef> {
+    val i = tiles.indexOfFirst { it.id == a }
+    val j = tiles.indexOfFirst { it.id == b }
+    if (i < 0 || j < 0 || i == j || tiles[i].size != tiles[j].size) return tiles
+    return tiles.toMutableList().also { it[i] = tiles[j]; it[j] = tiles[i] }
 }

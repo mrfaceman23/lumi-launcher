@@ -4,6 +4,12 @@ import android.content.Intent
 import android.provider.AlarmClock
 import android.provider.Settings
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -36,7 +42,6 @@ import androidx.compose.ui.unit.sp
 import app.lumi.launcher.Catalog
 import app.lumi.launcher.LauncherViewModel
 import app.lumi.launcher.TileDef
-import app.lumi.launcher.TileGroup
 import app.lumi.launcher.TileKind
 import app.lumi.launcher.TileSize
 import app.lumi.launcher.packRows
@@ -44,8 +49,8 @@ import app.lumi.launcher.packRows
 private val Gap = 8.dp
 
 /**
- * The start screen. Landscape: tile groups side by side, scrolling sideways (Windows 8).
- * Portrait: groups stacked, scrolling up and down (Windows Phone). Same tiles either way.
+ * The start screen: one long run of tiles. Landscape slides sideways (3 rows tall);
+ * portrait scrolls down (3 tiles across). Same tiles in the same order either way.
  */
 @Composable
 fun StartScreen(
@@ -55,41 +60,37 @@ fun StartScreen(
     onAskPhotos: () -> Unit,
 ) {
     val pal = LocalPalette.current
+    val tiles = vm.tiles
     // Every tile gets a running number, so the entrance swings across the screen in order.
-    val order = remember {
-        Catalog.groups.flatMap { g -> g.tiles.map { it.id } }.withIndex().associate { (i, id) -> id to i }
-    }
+    val order = remember(tiles) { tiles.withIndex().associate { (i, t) -> t.id to i } }
+    val sizes = remember(tiles) { tiles.map { it.size.units } }
     BoxWithConstraints(
         Modifier.fillMaxSize().background(pal.background).windowInsetsPadding(WindowInsets.safeDrawing)
     ) {
         val landscape = maxWidth > maxHeight
-        // Group titles only take room when a group actually has one.
-        val titleH = if (Catalog.groups.any { it.title.isNotBlank() }) TitleHeight else 0.dp
-        val bannerH = if (isDefaultHome) 0.dp else 64.dp
+        val bannerH = if (isDefaultHome && !vm.arranging) 0.dp else 64.dp
+        val banner: @Composable (Modifier) -> Unit = { mod ->
+            when {
+                vm.arranging -> ArrangeBanner(vm, mod)
+                !isDefaultHome -> DefaultBanner(onMakeDefault, mod)
+            }
+        }
         if (landscape) {
-            val avail = maxHeight - 24.dp - 20.dp - titleH - bannerH
+            val avail = maxHeight - 24.dp - 20.dp - bannerH
             val m = ((avail - Gap * 2) / 3).coerceIn(110.dp, 250.dp)
             CompositionLocalProvider(LocalTile provides m) {
                 Column(Modifier.fillMaxSize().padding(top = 24.dp, bottom = 20.dp)) {
-                    if (!isDefaultHome) DefaultBanner(onMakeDefault, Modifier.padding(horizontal = 28.dp))
+                    banner(Modifier.padding(horizontal = 28.dp))
                     Row(
                         Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 28.dp),
-                        horizontalArrangement = Arrangement.spacedBy(48.dp),
+                        horizontalArrangement = Arrangement.spacedBy(Gap),
                     ) {
-                        for (g in Catalog.groups) {
-                            Column {
-                                if (g.title.isNotBlank()) GroupTitle(g.title)
-                                val rows = packRows(g.tiles.map { it.size.units }, 4)
-                                Row(horizontalArrangement = Arrangement.spacedBy(Gap)) {
-                                    for (col in rows.chunked(3)) {
-                                        Column(verticalArrangement = Arrangement.spacedBy(Gap)) {
-                                            for (row in col) TileRow(g, row, m, vm, order, onAskPhotos)
-                                        }
-                                    }
-                                }
+                        for (col in packRows(sizes, 4).chunked(3)) {
+                            Column(verticalArrangement = Arrangement.spacedBy(Gap)) {
+                                for (row in col) TileRow(tiles, row, m, vm, order, onAskPhotos)
                             }
                         }
-                        Spacer(Modifier.width(8.dp))
+                        Spacer(Modifier.width(20.dp))
                     }
                 }
             }
@@ -99,15 +100,10 @@ fun StartScreen(
             CompositionLocalProvider(LocalTile provides m) {
                 Column(
                     Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = side, vertical = 24.dp),
-                    verticalArrangement = Arrangement.spacedBy(28.dp),
+                    verticalArrangement = Arrangement.spacedBy(Gap),
                 ) {
-                    if (!isDefaultHome) DefaultBanner(onMakeDefault)
-                    for (g in Catalog.groups) {
-                        Column(verticalArrangement = Arrangement.spacedBy(Gap)) {
-                            if (g.title.isNotBlank()) GroupTitle(g.title)
-                            for (row in packRows(g.tiles.map { it.size.units }, 6)) TileRow(g, row, m, vm, order, onAskPhotos)
-                        }
-                    }
+                    banner(Modifier)
+                    for (row in packRows(sizes, 6)) TileRow(tiles, row, m, vm, order, onAskPhotos)
                     Spacer(Modifier.height(24.dp))
                 }
             }
@@ -115,32 +111,46 @@ fun StartScreen(
     }
 }
 
-private val TitleHeight = 52.dp
-
 @Composable
-private fun GroupTitle(text: String) {
-    Text(
-        text, color = LocalPalette.current.text, fontFamily = Atkinson, fontWeight = FontWeight.Bold, fontSize = 26.sp,
-        modifier = Modifier.height(TitleHeight).padding(top = 4.dp),
-    )
+private fun DefaultBanner(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Column(modifier) {
+        Row(
+            Modifier.fillMaxWidth().height(52.dp).pressable(onClick).background(Color(0xFF0A5BB5)).padding(horizontal = 18.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text("Make Lumi the home screen", color = Color.White, fontFamily = Atkinson, fontWeight = FontWeight.Bold, fontSize = 19.sp)
+            Text("Set up", color = Color.White, fontFamily = Atkinson, fontSize = 17.sp)
+        }
+        Spacer(Modifier.height(12.dp))
+    }
 }
 
 @Composable
-private fun DefaultBanner(onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Row(
-        modifier.fillMaxWidth().height(52.dp).pressable(onClick).background(Color(0xFF0A5BB5)).padding(horizontal = 18.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Text("Make Lumi the home screen", color = Color.White, fontFamily = Atkinson, fontWeight = FontWeight.Bold, fontSize = 19.sp)
-        Text("Set up", color = Color.White, fontFamily = Atkinson, fontSize = 17.sp)
+private fun ArrangeBanner(vm: LauncherViewModel, modifier: Modifier = Modifier) {
+    Column(modifier) {
+        Row(
+            Modifier.fillMaxWidth().height(52.dp).background(Color(0xFF217A3A)).padding(start = 18.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                if (vm.picked == null) "Tap the tile you want to move" else "Now tap where it should go",
+                color = Color.White, fontFamily = Atkinson, fontWeight = FontWeight.Bold, fontSize = 19.sp,
+            )
+            Text(
+                "Done", color = Color.White, fontFamily = Atkinson, fontWeight = FontWeight.Bold, fontSize = 19.sp,
+                modifier = Modifier.fillMaxHeight().pressable({ vm.doneArranging() }).background(Color(0xFF175A2A))
+                    .padding(horizontal = 26.dp).wrapContentHeight(),
+            )
+        }
+        Spacer(Modifier.height(12.dp))
     }
-    Spacer(Modifier.height(12.dp))
 }
 
 @Composable
 private fun TileRow(
-    group: TileGroup,
+    tiles: List<TileDef>,
     indexes: List<Int>,
     m: Dp,
     vm: LauncherViewModel,
@@ -149,14 +159,34 @@ private fun TileRow(
 ) {
     Row(horizontalArrangement = Arrangement.spacedBy(Gap)) {
         for (i in indexes) {
-            val tile = group.tiles[i]
+            val tile = tiles[i]
             val w = if (tile.size == TileSize.WIDE) m * 2 + Gap else m
-            Tile(
-                tile, vm, onAskPhotos,
-                Modifier.size(w, m).turnstile(order[tile.id] ?: 0),
-            )
+            Box(Modifier.size(w, m).turnstile(order[tile.id] ?: 0)) {
+                // Press and hold any tile (that has no hold action of its own) to arrange tiles.
+                CompositionLocalProvider(LocalTileLongPress provides { vm.startArranging() }) {
+                    Tile(tile, vm, onAskPhotos, Modifier.fillMaxSize())
+                }
+                if (vm.arranging) ArrangeCover(tile, vm)
+            }
         }
     }
+}
+
+/** Sits on top of each tile in arrange mode: catches taps, marks the picked tile, dims ones it can't swap with. */
+@Composable
+private fun ArrangeCover(tile: TileDef, vm: LauncherViewModel) {
+    val pickedTile = vm.tiles.firstOrNull { it.id == vm.picked }
+    val isPicked = pickedTile?.id == tile.id
+    val canGoHere = pickedTile == null || pickedTile.size == tile.size
+    val pal = LocalPalette.current
+    Box(
+        Modifier.fillMaxSize()
+            .then(if (isPicked) Modifier.border(6.dp, Color.White) else Modifier)
+            .background(if (canGoHere) Color.Transparent else pal.background.copy(alpha = 0.65f))
+            .clickable(remember { MutableInteractionSource() }, indication = null) {
+                if (canGoHere) vm.arrangeTap(tile.id) else vm.toast("Big tiles only swap with big tiles")
+            }
+    )
 }
 
 @Composable
@@ -183,10 +213,14 @@ private fun Tile(tile: TileDef, vm: LauncherViewModel, onAskPhotos: () -> Unit, 
         }
         TileKind.HELP -> {
             val number = vm.prefs.helpNumber
-            HelpTile(color, vm.prefs.helpName, number.isNotBlank(), modifier) {
-                if (number.isBlank()) vm.toast("Help isn't set up yet")
-                else vm.openUrl("https://wa.me/$number")
-            }
+            HelpTile(
+                color, vm.prefs.helpName, number.isNotBlank(), modifier,
+                onTap = { vm.toast(if (number.isBlank()) "Help isn't set up yet" else "Press and hold to call for help") },
+                onHold = {
+                    if (number.isBlank()) vm.toast("Help isn't set up yet")
+                    else vm.openUrl("https://wa.me/$number")
+                },
+            )
         }
         TileKind.FOLDER -> FolderTile(
             seed = tile.id.hashCode(), color = color, label = tile.label, glyph = tile.glyph!!,
@@ -208,7 +242,6 @@ private fun Tile(tile: TileDef, vm: LauncherViewModel, onAskPhotos: () -> Unit, 
                         else -> vm.toast("${tile.label} isn't installed")
                     }
                 },
-                onLongClick = app?.let { a -> { vm.openAppInfo(a) } },
             )
         }
     }

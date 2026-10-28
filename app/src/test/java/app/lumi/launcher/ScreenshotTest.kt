@@ -29,8 +29,9 @@ class ScreenshotTest {
 
     @Before fun onlyWhenAsked() = assumeTrue(System.getenv("LUMI_SCREENSHOTS") == "1")
 
-    private fun shot(name: String) {
+    private fun shot(name: String, setup: (LauncherViewModel) -> Unit = {}) {
         val vm = LauncherViewModel(ApplicationProvider.getApplicationContext())
+        setup(vm)
         compose.setContent {
             CompositionLocalProvider(LocalPalette provides DarkPalette, LocalMotionOn provides false) {
                 Box(Modifier.fillMaxSize()) { StartScreen(vm, isDefaultHome = true, onMakeDefault = {}, onAskPhotos = {}) }
@@ -45,4 +46,7 @@ class ScreenshotTest {
 
     @Config(qualifiers = "w737dp-h1180dp-port-xhdpi", sdk = [34])
     @Test fun portrait() = shot("portrait")
+
+    @Config(qualifiers = "w1180dp-h737dp-land-xhdpi", sdk = [34])
+    @Test fun arranging() = shot("arranging") { it.startArranging(); it.arrangeTap("school") }
 }
