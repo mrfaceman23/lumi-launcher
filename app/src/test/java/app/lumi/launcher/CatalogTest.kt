@@ -23,6 +23,24 @@ class CatalogTest {
     }
 
     @Test
+    fun squareTileTucksBesideWideOne() {
+        // clock (wide), keep listening (wide), photos, storage in portrait
+        assertEquals(listOf(listOf(0, 2), listOf(1, 3)), packRows(listOf(4, 4, 2, 2), 6))
+    }
+
+    @Test
+    fun everyGroupFillsItsColumnsWithNoHoles() {
+        for (g in Catalog.groups) {
+            val sizes = g.tiles.map { it.size.units }
+            val land = packRows(sizes, 4)
+            assertEquals("${g.title} in landscape", 0, land.size % 3)
+            assertTrue("${g.title} landscape rows full", land.all { r -> r.sumOf { sizes[it] } == 4 })
+            val port = packRows(sizes, 6)
+            assertTrue("${g.title} portrait rows full", port.all { r -> r.sumOf { sizes[it] } == 6 })
+        }
+    }
+
+    @Test
     fun everyTileHasAUniqueId() {
         val ids = Catalog.groups.flatMap { g -> g.tiles.map { it.id } }
         assertEquals(ids.size, ids.toSet().size)

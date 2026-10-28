@@ -58,7 +58,7 @@ private val glyphPaths: Map<Glyph, String> = mapOf(
     Glyph.SCHOOL to "M2 8l10-5 10 5-10 5z M6 10v5c3 2.5 9 2.5 12 0v-5",
     Glyph.TALK to "M4 5h16v11H9l-5 4z",
     Glyph.MAIL to "M3 6h18v12H3z M3 6l9 7 9-7",
-    Glyph.CROCHET to "M12 3a9 9 0 1 0 0.01 0z M5 8c5 1 9 6 9 13 M9 3.6c3 3 5 9 3.5 17 M3.2 13c5-0.5 11 2 15 6.5 M17 21l4 -4",
+    Glyph.CROCHET to "M11 3a8 8 0 1 0 0.01 0z M5 7c4 0 9 4 10 11 M8 4c3 1 7 6 7 12 M3.5 11c4-1 9 2 11 8.5 M17.5 16.5c2 1 4 2.5 3.5 5",
     Glyph.WATCH to "M3 6h18v12H3z M8 21h8 M9 2l3 4 3-4",
     Glyph.SHOP to "M5 8h14l-1 13H6z M9 8a3 3 0 0 1 6 0",
     Glyph.HOME to "M3 11l9-7 9 7 M5 10v10h14V10 M10 20v-6h4v6",

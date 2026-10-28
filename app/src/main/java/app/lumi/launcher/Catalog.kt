@@ -105,6 +105,8 @@ object Catalog {
 
     val folders = listOf(school, talk, mail, crochet, watch, shopping, home, money, tools)
 
+    // Group sizes are chosen so every group fills its columns exactly in landscape
+    // (3 rows per column) and in portrait (3 tiles per row). No holes either way.
     val groups: List<TileGroup> = listOf(
         TileGroup(
             "Today",
@@ -113,24 +115,25 @@ object Catalog {
                 TileDef("listen", TileKind.LISTEN, TileSize.WIDE, "Keep listening", PURPLE, Glyph.LISTEN, listOf(AUDIOBOOKSHELF), "Audiobookshelf"),
                 TileDef("photos", TileKind.PHOTOS, TileSize.MEDIUM, "Photos", MAGENTA, Glyph.PHOTOS, photoApps, PHOTO_APP_HINT),
                 TileDef("storage", TileKind.STORAGE, TileSize.MEDIUM, "Storage", SLATE, Glyph.STORAGE),
-                TileDef("help", TileKind.HELP, TileSize.MEDIUM, "Call for help", RED, Glyph.HELP),
-                TileDef("spotify", TileKind.APP, TileSize.MEDIUM, "Spotify", packages = listOf("com.spotify.music")),
             ),
         ),
         TileGroup(
             "Every day",
-            listOf(school, talk, mail, crochet, watch,
+            listOf(
+                TileDef("help", TileKind.HELP, TileSize.MEDIUM, "Call for help", RED, Glyph.HELP),
+                school, talk, mail, crochet, watch,
+                TileDef("spotify", TileKind.APP, TileSize.MEDIUM, "Spotify", packages = listOf("com.spotify.music")),
                 TileDef("kindle", TileKind.APP, TileSize.MEDIUM, "Kindle", packages = listOf("com.amazon.kindle")),
                 TileDef("chrome", TileKind.APP, TileSize.MEDIUM, "Internet", packages = listOf("com.android.chrome", "com.sec.android.app.sbrowser")),
                 TileDef("camera", TileKind.APP, TileSize.MEDIUM, "Camera", packages = listOf("com.sec.android.app.camera")),
+                TileDef("files", TileKind.APP, TileSize.MEDIUM, "My files", labelHint = "AiData", packages = listOf("com.asustor.aidata")),
+                TileDef("game", TileKind.APP, TileSize.MEDIUM, "Royal Match", packages = listOf("com.dreamgames.royalmatch")),
             ),
         ),
         TileGroup(
             "Around the house",
-            listOf(shopping, home, money,
-                TileDef("files", TileKind.APP, TileSize.MEDIUM, "My files", labelHint = "AiData", packages = listOf("com.asustor.aidata")),
-                TileDef("game", TileKind.APP, TileSize.MEDIUM, "Royal Match", packages = listOf("com.dreamgames.royalmatch")),
-                tools,
+            listOf(
+                shopping, home, money, tools,
                 TileDef("myapps", TileKind.MY_APPS, TileSize.MEDIUM, "My apps", SLATE, Glyph.MY_APPS),
                 TileDef("allapps", TileKind.ALL_APPS, TileSize.MEDIUM, "All apps", BLUE, Glyph.ALL_APPS),
             ),
@@ -149,20 +152,23 @@ object Catalog {
 }
 
 /**
- * Packs tiles into rows [width] units wide, in order, never reordering: a tile that doesn't
- * fit starts a new row. Returns the tile indexes for each row.
+ * Packs tiles into rows [width] units wide. Each tile goes into the first row that still has
+ * room for it, so a square tile can tuck in beside a wide one instead of leaving a gap.
+ * Returns the tile indexes for each row.
  */
 fun packRows(sizes: List<Int>, width: Int): List<List<Int>> {
     val rows = mutableListOf<MutableList<Int>>()
-    var used = width
+    val used = mutableListOf<Int>()
     sizes.forEachIndexed { i, s ->
         val w = s.coerceAtMost(width)
-        if (used + w > width) {
-            rows += mutableListOf<Int>()
-            used = 0
+        val r = used.indexOfFirst { it + w <= width }
+        if (r >= 0) {
+            rows[r] += i
+            used[r] += w
+        } else {
+            rows += mutableListOf(i)
+            used += w
         }
-        rows.last() += i
-        used += w
     }
     return rows
 }
