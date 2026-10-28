@@ -1,8 +1,8 @@
 # Lumi status
 
 ## Live (v0.1.0)
-- Start screen in three groups: Today, Every day, Around the house.
-- Landscape scrolls sideways; portrait scrolls down. Same tiles, they reflow.
+- One continuous slide of tiles: sideways in landscape, down in portrait. Same tiles, they reflow.
+- Call for help is the very last tile, on purpose, so it is hard to hit by accident.
 - Clock tile with date and today's weather (free Open-Meteo, city-level location only).
 - Keep listening tile: the book she's in the middle of, with cover and progress, from Audiobookshelf on the NAS.
 - Photos tile: slowly flips through her latest pictures.

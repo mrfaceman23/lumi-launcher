@@ -63,9 +63,11 @@ fun StartScreen(
         Modifier.fillMaxSize().background(pal.background).windowInsetsPadding(WindowInsets.safeDrawing)
     ) {
         val landscape = maxWidth > maxHeight
+        // Group titles only take room when a group actually has one.
+        val titleH = if (Catalog.groups.any { it.title.isNotBlank() }) TitleHeight else 0.dp
         val bannerH = if (isDefaultHome) 0.dp else 64.dp
         if (landscape) {
-            val avail = maxHeight - 24.dp - 20.dp - TitleHeight - bannerH
+            val avail = maxHeight - 24.dp - 20.dp - titleH - bannerH
             val m = ((avail - Gap * 2) / 3).coerceIn(110.dp, 250.dp)
             CompositionLocalProvider(LocalTile provides m) {
                 Column(Modifier.fillMaxSize().padding(top = 24.dp, bottom = 20.dp)) {
@@ -76,7 +78,7 @@ fun StartScreen(
                     ) {
                         for (g in Catalog.groups) {
                             Column {
-                                GroupTitle(g.title)
+                                if (g.title.isNotBlank()) GroupTitle(g.title)
                                 val rows = packRows(g.tiles.map { it.size.units }, 4)
                                 Row(horizontalArrangement = Arrangement.spacedBy(Gap)) {
                                     for (col in rows.chunked(3)) {
@@ -102,7 +104,7 @@ fun StartScreen(
                     if (!isDefaultHome) DefaultBanner(onMakeDefault)
                     for (g in Catalog.groups) {
                         Column(verticalArrangement = Arrangement.spacedBy(Gap)) {
-                            GroupTitle(g.title)
+                            if (g.title.isNotBlank()) GroupTitle(g.title)
                             for (row in packRows(g.tiles.map { it.size.units }, 6)) TileRow(g, row, m, vm, order, onAskPhotos)
                         }
                     }

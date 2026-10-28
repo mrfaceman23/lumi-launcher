@@ -33,11 +33,16 @@ class CatalogTest {
         for (g in Catalog.groups) {
             val sizes = g.tiles.map { it.size.units }
             val land = packRows(sizes, 4)
-            assertEquals("${g.title} in landscape", 0, land.size % 3)
-            assertTrue("${g.title} landscape rows full", land.all { r -> r.sumOf { sizes[it] } == 4 })
+            assertEquals("tiles in landscape", 0, land.size % 3)
+            assertTrue("landscape rows full", land.all { r -> r.sumOf { sizes[it] } == 4 })
             val port = packRows(sizes, 6)
-            assertTrue("${g.title} portrait rows full", port.all { r -> r.sumOf { sizes[it] } == 6 })
+            assertTrue("portrait rows full", port.all { r -> r.sumOf { sizes[it] } == 6 })
         }
+    }
+
+    @Test
+    fun helpIsTheVeryLastTile() {
+        assertEquals("help", Catalog.groups.last().tiles.last().id)
     }
 
     @Test

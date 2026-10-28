@@ -105,22 +105,16 @@ object Catalog {
 
     val folders = listOf(school, talk, mail, crochet, watch, shopping, home, money, tools)
 
-    // Group sizes are chosen so every group fills its columns exactly in landscape
-    // (3 rows per column) and in portrait (3 tiles per row). No holes either way.
+    // One continuous run of tiles, no headers: sideways in landscape, down in portrait.
+    // The count is chosen so the run ends on a full column / full row either way.
     val groups: List<TileGroup> = listOf(
         TileGroup(
-            "Today",
+            "",
             listOf(
                 TileDef("clock", TileKind.CLOCK, TileSize.WIDE, "Clock", BLUE),
                 TileDef("listen", TileKind.LISTEN, TileSize.WIDE, "Keep listening", PURPLE, Glyph.LISTEN, listOf(AUDIOBOOKSHELF), "Audiobookshelf"),
                 TileDef("photos", TileKind.PHOTOS, TileSize.MEDIUM, "Photos", MAGENTA, Glyph.PHOTOS, photoApps, PHOTO_APP_HINT),
                 TileDef("storage", TileKind.STORAGE, TileSize.MEDIUM, "Storage", SLATE, Glyph.STORAGE),
-            ),
-        ),
-        TileGroup(
-            "Every day",
-            listOf(
-                TileDef("help", TileKind.HELP, TileSize.MEDIUM, "Call for help", RED, Glyph.HELP),
                 school, talk, mail, crochet, watch,
                 TileDef("spotify", TileKind.APP, TileSize.MEDIUM, "Spotify", packages = listOf("com.spotify.music")),
                 TileDef("kindle", TileKind.APP, TileSize.MEDIUM, "Kindle", packages = listOf("com.amazon.kindle")),
@@ -128,14 +122,11 @@ object Catalog {
                 TileDef("camera", TileKind.APP, TileSize.MEDIUM, "Camera", packages = listOf("com.sec.android.app.camera")),
                 TileDef("files", TileKind.APP, TileSize.MEDIUM, "My files", labelHint = "AiData", packages = listOf("com.asustor.aidata")),
                 TileDef("game", TileKind.APP, TileSize.MEDIUM, "Royal Match", packages = listOf("com.dreamgames.royalmatch")),
-            ),
-        ),
-        TileGroup(
-            "Around the house",
-            listOf(
                 shopping, home, money, tools,
                 TileDef("myapps", TileKind.MY_APPS, TileSize.MEDIUM, "My apps", SLATE, Glyph.MY_APPS),
                 TileDef("allapps", TileKind.ALL_APPS, TileSize.MEDIUM, "All apps", BLUE, Glyph.ALL_APPS),
+                // Last on purpose, so it's hard to hit by accident.
+                TileDef("help", TileKind.HELP, TileSize.MEDIUM, "Call for help", RED, Glyph.HELP),
             ),
         ),
     )
