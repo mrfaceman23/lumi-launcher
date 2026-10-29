@@ -18,8 +18,10 @@
 - Black or white background (settings).
 - Hidden settings: press and hold the clock tile.
 
+## Tested on her tablet
+- Keep listening tile against her Audiobookshelf server (http://192.168.1.82:33378/audiobookshelf), Oct 28.
+
 ## Not tested yet on her tablet
-- Keep listening tile against her real Audiobookshelf server (needs the server set up first).
 - AiData and AiFoto tiles find those apps by name, since their package names weren't known yet.
 
 ## Next
