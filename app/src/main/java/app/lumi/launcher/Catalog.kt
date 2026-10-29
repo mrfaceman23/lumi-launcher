@@ -46,8 +46,7 @@ object Catalog {
     const val AUDIOBOOKSHELF = "com.audiobookshelf.app"
 
     /** Apps that open from the Photos tile, best first. */
-    val photoApps = listOf("com.sec.android.gallery3d", "com.google.android.apps.photos")
-    const val PHOTO_APP_HINT = "AiFoto"
+    val photoApps = listOf("com.sec.android.gallery3d", "com.google.android.apps.photos", "com.asustor.aifoto.plus")
 
     val school = TileDef(
         "school", TileKind.FOLDER, TileSize.MEDIUM, "School", TEAL, Glyph.SCHOOL,
@@ -97,6 +96,8 @@ object Catalog {
             "com.android.settings", "com.sec.android.app.popupcalculator", "com.sec.android.app.clockpackage",
             "com.samsung.android.calendar", "com.sec.android.app.voicenote", "com.sec.android.app.myfiles",
             "com.google.android.apps.adm", "com.hp.printercontrol", "com.tailscale.ipn",
+            "com.asustor.aifoto.plus", "dk.tacit.android.foldersync.lite", "dk.tacit.android.foldersync.full",
+            "dev.imranr.obtainium",
             "com.sec.android.app.music", "com.samsung.android.app.notes", "com.android.vending",
             "com.sec.android.app.samsungapps", "com.google.android.googlequicksearchbox",
             "com.sec.android.gallery3d", "com.google.android.apps.photos",
@@ -113,7 +114,7 @@ object Catalog {
             listOf(
                 TileDef("clock", TileKind.CLOCK, TileSize.WIDE, "Clock", BLUE),
                 TileDef("listen", TileKind.LISTEN, TileSize.WIDE, "Keep listening", PURPLE, Glyph.LISTEN, listOf(AUDIOBOOKSHELF), "Audiobookshelf"),
-                TileDef("photos", TileKind.PHOTOS, TileSize.MEDIUM, "Photos", MAGENTA, Glyph.PHOTOS, photoApps, PHOTO_APP_HINT),
+                TileDef("photos", TileKind.PHOTOS, TileSize.MEDIUM, "Photos", MAGENTA, Glyph.PHOTOS, photoApps),
                 TileDef("storage", TileKind.STORAGE, TileSize.MEDIUM, "Storage", SLATE, Glyph.STORAGE),
                 // Easy to find, but a tap does nothing: it only calls on press and hold.
                 TileDef("help", TileKind.HELP, TileSize.MEDIUM, "Call for help", RED, Glyph.HELP),

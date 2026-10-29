@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+- AiFoto, FolderSync and Obtainium now live in the Tools folder instead of landing in My apps.
+- Photos tile opens her gallery; AiFoto is the backup if the gallery is missing.
+
 ## 0.1.0
 - One continuous slide of tiles, no group headers.
 - Call for help only calls on press and hold; a tap just reminds her. Moved back near the front.

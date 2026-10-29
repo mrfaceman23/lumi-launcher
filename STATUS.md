@@ -1,6 +1,6 @@
 # Lumi status
 
-## Live (v0.1.0)
+## Live (v0.1.1)
 - One continuous slide of tiles: sideways in landscape, down in portrait. Same tiles, they reflow.
 - Call for help only calls on press and hold (a tap shows a reminder).
 - Arrange mode: press and hold any tile, tap one, then tap where it goes. Same-size tiles swap, so no gaps. Reset in settings.
@@ -22,7 +22,7 @@
 - Keep listening tile against her Audiobookshelf server (http://192.168.1.82:33378/audiobookshelf), Oct 28.
 
 ## Not tested yet on her tablet
-- AiData and AiFoto tiles find those apps by name, since their package names weren't known yet.
+- My files tile: AiData isn't installed on her tablet yet, so it opens the Play Store page until it is.
 
 ## Next
 - Unread counts on Talk and Mail (needs her to allow notification access once).
