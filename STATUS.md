@@ -1,5 +1,16 @@
 # Lumi status
 
+<!-- resume-card -->
+**Resume card** · updated 2026-11-03
+- **State:** COMPLETE (bugs only)
+- **Version:** 0.1.1
+- **Last done:** Oct 28: AiFoto, FolderSync and Obtainium in Tools; Keep listening tile confirmed on her tablet.
+- **Next step:** Bugs only.
+- **Blocked on:** My files tile waits on AiData being installed on her tablet.
+- **Done when:** Done: marked complete Oct 31.
+<!-- /resume-card -->
+
+
 ## Live (v0.1.1)
 - One continuous slide of tiles: sideways in landscape, down in portrait. Same tiles, they reflow.
 - Call for help only calls on press and hold (a tap shows a reminder).
