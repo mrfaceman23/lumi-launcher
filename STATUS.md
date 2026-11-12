@@ -1,10 +1,10 @@
 # Lumi status
 
 <!-- resume-card -->
-**Resume card** · updated 2026-11-03
+**Resume card** · updated 2026-11-12
 - **State:** COMPLETE (bugs only)
-- **Version:** 0.1.1
-- **Last done:** Oct 28: AiFoto, FolderSync and Obtainium in Tools; Keep listening tile confirmed on her tablet.
+- **Version:** 0.1.2 (tag v0.1.2, commit fca722e)
+- **Last done:** Nov 11: 0.1.2, the new Coder's Desk app sits first in the School folder (old web link hides once the app is installed).
 - **Next step:** Bugs only.
 - **Blocked on:** My files tile waits on AiData being installed on her tablet.
 - **Done when:** Done: marked complete Oct 31.
