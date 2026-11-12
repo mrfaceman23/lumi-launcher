@@ -51,6 +51,7 @@ object Catalog {
     val school = TileDef(
         "school", TileKind.FOLDER, TileSize.MEDIUM, "School", TEAL, Glyph.SCHOOL,
         listOf(
+            "app.codersdesk", // Coder's Desk study app (mrfaceman23/Coders-Desk), first in the folder
             "com.vitalsource.bookshelf", "com.fluidtouch.noteshelf3", "com.fluidtouch.noteshelf2",
             "com.adobe.reader", "com.google.android.apps.docs.editors.docs", "com.google.android.apps.docs",
             "us.zoom.videomeetings", "com.microsoft.teams",

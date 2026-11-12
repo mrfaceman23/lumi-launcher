@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.2
+- The new Coder's Desk app sits first in the School folder. The old Coder's Desk web link hides once the app is installed.
+
 ## 0.1.1
 - AiFoto, FolderSync and Obtainium now live in the Tools folder instead of landing in My apps.
 - Photos tile opens her gallery; AiFoto is the backup if the gallery is missing.

@@ -95,7 +95,8 @@ fun FolderPanel(vm: LauncherViewModel) {
             val items: List<FolderItem> = buildList {
                 if (f != null) {
                     addAll(vm.folderApps(f).map { FolderItem.App(it) })
-                    if (f.id == "school" && vm.prefs.codersDeskUrl.isNotBlank()) add(0, FolderItem.Link("Coder's Desk", vm.prefs.codersDeskUrl))
+                    // The old Coder's Desk web link only shows until the Coder's Desk app is installed.
+                    if (f.id == "school" && vm.prefs.codersDeskUrl.isNotBlank() && none { it is FolderItem.App && it.app.component.packageName == "app.codersdesk" }) add(0, FolderItem.Link("Coder's Desk", vm.prefs.codersDeskUrl))
                 } else {
                     addAll(vm.myApps().map { FolderItem.App(it) })
                 }

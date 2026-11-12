@@ -14,8 +14,8 @@ android {
         applicationId = "app.lumi.launcher"
         minSdk = 31
         targetSdk = 35
-        versionCode = 2
-        versionName = "0.1.1"
+        versionCode = 3
+        versionName = "0.1.2"
     }
 
     // One shared key for every build, so updates always install over each other.
