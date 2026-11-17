@@ -1,5 +1,8 @@
 # Rules for Claude on this repo
 
+## Standards (read first)
+Before any work in this repo, read `mrfaceman23/Standards` (https://github.com/mrfaceman23/Standards): start with README.md, then load the files it lists for your task. Those rules apply here. Project-specific exceptions go in `docs/DEVIATIONS.md`, citing the rule ID.
+
 Lumi is the home screen (launcher) for Jordan's mom's Samsung Galaxy Tab S7+ (SM-T970, Android 13).
 It's a side project, not part of Citadel, but it follows the same way of working:
 
